@@ -1949,46 +1949,60 @@ body {
 
 
         // View sale details
-        window.viewSaleDetails = function (saleId) {
-            const sale = sales.find(s => s.id === saleId);
-            if (!sale) return;
+        window.viewSaleDetails = async function (saleId) {
+    const saleDoc = await window.firebaseFns.getDocs(
+        window.firebaseFns.collection(window.firebaseDB, 'ventas')
+    );
 
-            const date = new Date(sale.date);
-            const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
-
-            saleDetailsContent.innerHTML = `
-                <div class="form-container" style="box-shadow: none; padding: 0;">
-                    <h3 class="mb-20">Venta #${sale.id.slice(-6).toUpperCase()}</h3>
-                    <p><strong>Fecha:</strong> ${formattedDate}</p>
-                    <p><strong>Total:</strong> $${sale.total.toFixed(2)}</p>
-                    <p><strong>Ganancia:</strong> $${sale.profit.toFixed(2)}</p>
-                    
-                    <h4 style="margin: 20px 0 10px 0;">Productos:</h4>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Precio</th>
-                                <th>Cantidad</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${sale.items.map(item => `
-                                <tr>
-                                    <td>${item.name}</td>
-                                    <td>$${item.price.toFixed(2)}</td>
-                                    <td>${item.quantity}</td>
-                                    <td>$${item.total.toFixed(2)}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-            saleDetailsModal.style.display = 'block';
+    let sale = null;
+    saleDoc.forEach(doc => {
+        if (doc.id === saleId) {
+            sale = doc.data();
+            sale.id = doc.id;
         }
+    });
+
+    if (!sale) {
+        alert('No se encontró la venta.');
+        return;
+    }
+
+    const date = new Date(sale.date);
+    const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+
+    saleDetailsContent.innerHTML = `
+        <div class="form-container" style="box-shadow: none; padding: 0;">
+            <h3 class="mb-20">Venta #${sale.id.slice(-6).toUpperCase()}</h3>
+            <p><strong>Fecha:</strong> ${formattedDate}</p>
+            <p><strong>Total:</strong> $${sale.total.toFixed(2)}</p>
+            <p><strong>Ganancia:</strong> $${sale.profit.toFixed(2)}</p>
+
+            <h4 style="margin: 20px 0 10px 0;">Productos:</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${sale.items.map(item => `
+                        <tr>
+                            <td>${item.name}</td>
+                            <td>$${item.price.toFixed(2)}</td>
+                            <td>${item.quantity}</td>
+                            <td>$${item.total.toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    saleDetailsModal.style.display = 'block';
+};
 
         // Close sale details modal
         closeSaleDetailsModal.addEventListener('click', function () {
@@ -1996,13 +2010,28 @@ body {
         });
 
         // Print sale receipt
-        window.printSaleReceipt = function (saleId) {
-            const sale = sales.find(s => s.id === saleId);
-            if (!sale) return;
+        window.printSaleReceipt = async function (saleId) {
+    const saleDoc = await window.firebaseFns.getDocs(
+        window.firebaseFns.collection(window.firebaseDB, 'ventas')
+    );
 
-            // Show the receipt modal with this sale's data
-            showReceipt(sale);
-        };
+    let sale = null;
+    saleDoc.forEach(doc => {
+        if (doc.id === saleId) {
+            sale = doc.data();
+            sale.id = doc.id;
+        }
+    });
+
+    if (!sale) {
+        alert('No se encontró la venta.');
+        return;
+    }
+
+    // Mostrar recibo
+    showReceipt(sale);
+};
+
 
         // Update statistics
         function updateStatistics() {
