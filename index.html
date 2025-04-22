@@ -784,6 +784,48 @@ body {
     }
 }
 
+@media (max-width: 768px) {
+  .table-container table thead {
+    display: none;
+  }
+
+  .table-container table, 
+  .table-container table tbody, 
+  .table-container table tr, 
+  .table-container table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table-container table tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  .table-container table td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+
+  .table-container table td:last-child {
+    border-bottom: none;
+  }
+
+  .table-container table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+    color: var(--primary);
+  }
+}
+
+
 /* Meta tag necesario para asegurar escala correcta en móviles */
 /* Agregar al HTML: <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> */
     </style>
