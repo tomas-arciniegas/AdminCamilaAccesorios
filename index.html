@@ -10,824 +10,840 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
-    --primary: #e83e8c;
-    --primary-light: #f8d7e3;
-    --secondary: #6c757d;
-    --dark: #343a40;
-    --light: #f8f9fa;
-    --success: #28a745;
-    --info: #17a2b8;
-    --warning: #ffc107;
-    --danger: #dc3545;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    background-color: #f5f5f5;
-    color: #333;
-    width: 100%;
-    overflow-x: hidden; /* Previene desplazamiento horizontal en todo el documento */
-}
-
-.container {
-    display: flex;
-    min-height: 100vh;
-    width: 100%;
-    max-width: 100%; /* Asegura que no exceda el ancho de la pantalla */
-}
-
-/* Sidebar */
-.sidebar {
-    width: 250px;
-    background: linear-gradient(to bottom, var(--primary), #c71f76);
-    color: white;
-    padding: 20px 0;
-    position: fixed;
-    height: 100vh;
-    overflow-y: auto;
-    transition: all 0.3s;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-}
-
-.sidebar-header {
-    text-align: center;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.sidebar-header h1 {
-    font-size: 24px;
-    font-weight: 700;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    margin-bottom: 5px;
-}
-
-.sidebar-header p {
-    font-size: 14px;
-    opacity: 0.8;
-}
-
-.sidebar-menu {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar-menu li {
-    margin-bottom: 5px;
-}
-
-.sidebar-menu a {
-    display: block;
-    padding: 12px 20px;
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 16px;
-    transition: all 0.3s;
-    border-left: 4px solid transparent;
-}
-
-.sidebar-menu a:hover,
-.sidebar-menu a.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-left: 4px solid white;
-}
-
-.sidebar-menu a i {
-    margin-right: 10px;
-    width: 20px;
-    text-align: center;
-}
-
-/* Mobile menu icon */
-.mobile-menu-icon {
-    display: none;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    font-size: 24px;
-    color: white;
-    background: var(--primary);
-    padding: 10px;
-    border-radius: 50%;
-    z-index: 1100;
-    cursor: pointer;
-}
-
-/* Main content */
-.main-content {
-    flex: 1;
-    margin-left: 250px;
-    padding: 20px;
-    transition: all 0.3s;
-    width: calc(100% - 250px); /* Asegura el ancho correcto */
-    max-width: 100%; /* Previene desplazamiento horizontal */
-}
-
-/* Dashboard */
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-    width: 100%;
-}
-
-.stat-card {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    text-align: center;
-    transition: transform 0.3s;
-    width: 100%;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-card i {
-    font-size: 40px;
-    margin-bottom: 10px;
-    color: var(--primary);
-}
-
-.stat-card h3 {
-    font-size: 24px;
-    margin-bottom: 5px;
-}
-
-.stat-card p {
-    color: var(--secondary);
-    font-size: 14px;
-}
-
-/* Forms */
-.form-container {
-    background-color: white;
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
-    width: 100%;
-}
-
-.form-title {
-    color: var(--primary);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.form-group {
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-.form-control {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: border 0.3s;
-}
-
-.form-control:focus {
-    border-color: var(--primary);
-    outline: none;
-}
-
-.form-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -10px;
-    width: 100%;
-}
-
-.form-col {
-    flex: 1;
-    padding: 0 10px;
-    min-width: 200px;
-}
-
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    transition: all 0.3s;
-}
-
-.btn:hover {
-    background-color: #c71f76;
-    transform: translateY(-2px);
-}
-
-.btn-secondary {
-    background-color: var(--secondary);
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-}
-
-/* Tables */
-.table-container {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
-    width: 100%;
-    overflow-x: auto; /* Permite desplazamiento horizontal solo en tablas si es necesario */
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed; /* Ayuda a manejar el ancho de columnas */
-}
-
-.table th,
-.table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-    word-wrap: break-word; /* Permite que el texto se rompa y envuelva */
-}
-
-.table th {
-    background-color: var(--primary-light);
-    color: var(--primary);
-    font-weight: 600;
-}
-
-.table tr:hover {
-    background-color: #f9f9f9;
-}
-
-.table .actions {
-    display: flex;
-    gap: 10px;
-}
-
-.table .actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    transition: color 0.3s;
-}
-
-.table .actions .edit {
-    color: var(--info);
-}
-
-.table .actions .delete {
-    color: var(--danger);
-}
-
-/* Product card grid */
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    width: 100%;
-}
-
-.product-card {
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s;
-    width: 100%;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-}
-
-.product-img {
-    height: 200px;
-    overflow: hidden;
-    position: relative;
-}
-
-.product-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s;
-}
-
-.product-card:hover .product-img img {
-    transform: scale(1.05);
-}
-
-.product-info {
-    padding: 15px;
-}
-
-.product-info h3 {
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: var(--dark);
-}
-
-.product-info .price {
-    color: var(--primary);
-    font-weight: 600;
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.product-info .cost {
-    color: var(--secondary);
-    font-size: 14px;
-}
-
-.product-info .stock {
-    margin: 10px 0;
-    font-weight: 500;
-}
-
-.product-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-
-/* Charts */
-.chart-container {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
-    width: 100%;
-    overflow-x: hidden; /* Previene desplazamiento horizontal en gráficos */
-}
-
-.chart-title {
-    color: var(--primary);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    font-size: 18px;
-}
-
-/* Tabs */
-.tabs {
-    display: flex;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    flex-wrap: wrap; /* Permite que las pestañas se envuelvan en móviles */
-    width: 100%;
-}
-
-.tab {
-    padding: 12px 20px;
-    cursor: pointer;
-    color: var(--secondary);
-    font-weight: 500;
-    border-bottom: 3px solid transparent;
-    transition: all 0.3s;
-}
-
-.tab:hover {
-    color: var(--primary);
-}
-
-.tab.active {
-    color: var(--primary);
-    border-bottom-color: var(--primary);
-}
-
-/* Section */
-.section {
-    display: none;
-    width: 100%;
-}
-
-.section.active {
-    display: block;
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 100;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    overflow: auto;
-}
-
-.modal-content {
-    background-color: white;
-    margin: 10% auto;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    max-width: 90%; /* Más adaptable para móviles */
-    width: 700px;
-    animation: modalopen 0.3s;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.modal-header h2 {
-    color: var(--primary);
-}
-
-.close-modal {
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    color: var(--secondary);
-}
-
-.close-modal:hover {
-    color: var(--primary);
-}
-
-@keyframes modalopen {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Cart */
-.cart-container {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
-    width: 100%;
-}
-
-.cart-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-    flex-wrap: wrap; /* Permite envolvimiento en pantallas pequeñas */
-}
-
-.cart-item-img {
-    width: 80px;
-    height: 80px;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.cart-item-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.cart-item-info {
-    flex: 1;
-    padding: 0 15px;
-    min-width: 150px; /* Asegura espacio mínimo para la información */
-}
-
-.cart-item-title {
-    font-weight: 500;
-    margin-bottom: 5px;
-}
-
-.cart-item-price {
-    color: var(--primary);
-    font-weight: 500;
-}
-
-.cart-item-actions {
-    display: flex;
-    align-items: center;
-}
-
-.cart-item-qty {
-    width: 50px;
-    text-align: center;
-    margin: 0 10px;
-}
-
-.cart-summary {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 2px solid #eee;
-    text-align: right;
-}
-
-.cart-total {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--primary);
-    margin-bottom: 15px;
-}
-
-/* Receipt */
-.receipt {
-    padding: 20px;
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.receipt-header {
-    text-align: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #eee;
-}
-
-.receipt-logo {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 5px;
-}
-
-.receipt-info {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    flex-wrap: wrap; /* Permite envolvimiento en móviles */
-}
-
-.receipt-items {
-    margin-bottom: 20px;
-    width: 100%;
-    overflow-x: hidden;
-}
-
-.receipt-total {
-    text-align: right;
-    font-size: 18px;
-    font-weight: 600;
-    margin-top: 20px;
-    padding-top: 10px;
-    border-top: 2px solid #eee;
-}
-
-/* Utils */
-.text-center {
-    text-align: center;
-}
-
-.mb-20 {
-    margin-bottom: 20px;
-}
-
-.page-title {
-    color: var(--primary);
-    margin-bottom: 20px;
-    font-weight: 600;
-    font-size: 24px;
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-    .sidebar {
-        width: 200px;
-    }
-
-    .main-content {
-        margin-left: 200px;
-        width: calc(100% - 200px);
-    }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-        width: 70%;
-    }
-    
-    .sidebar.active {
-        display: block;
-        transform: translateX(0);
-    }
-    
-    .mobile-menu-icon {
-        display: block;
-    }
-
-    .main-content {
-        margin-left: 0;
-        padding: 15px;
-        width: 100%;
-    }
-
-    .sidebar-header h1 {
-        font-size: 18px; /* Mejor mostrar texto pequeño que ocultarlo */
-    }
-
-    .sidebar-header p {
-        font-size: 12px;
-    }
-
-    .dashboard {
-        grid-template-columns: 1fr;
-    }
-    
-    .product-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .form-row {
-        flex-direction: column;
-    }
-    
-    .form-col {
-        width: 100%;
-        padding: 0;
-        margin-bottom: 15px;
-    }
-
-    /* Reducir tamaño de texto y padding para móviles */
-    body {
-        font-size: 14px;
-    }
-    
-    h1, h2, h3 {
-        word-wrap: break-word;
-    }
-    
-    .table th, 
-    .table td {
-        padding: 8px;
-        font-size: 12px;
-    }
-    
-    /* Ajustar elementos de carro para móviles */
-    .cart-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .cart-item-info,
-    .cart-item-actions {
-        width: 100%;
-        margin-top: 10px;
-        padding: 0;
-    }
-    
-    .modal-content {
-        padding: 15px;
-        width: 90%;
-        margin: 20% auto;
-    }
-}
-
-@media (min-width: 769px) {
-    .sidebar {
-        display: block;
-        transform: none;
-        width: 250px;
-    }
-    
-    .main-content {
-        margin-left: 250px;
-        width: calc(100% - 250px);
-    }
-}
-
-@media (max-width: 480px) {
-    .sidebar {
-        width: 85%;
-    }
-    
-    .btn {
-        width: 100%;
-        margin-bottom: 10px;
-        padding: 8px 15px;
-    }
-    
-    .form-container,
-    .table-container,
-    .chart-container,
-    .cart-container {
-        padding: 15px 10px;
-    }
-    
-    .page-title {
-        font-size: 20px;
-    }
-    
-    .receipt {
-        font-size: 12px;
-        padding: 10px;
-    }
-    
-    /* Asegurar que las tablas se vean bien en móviles */
-    .table {
-        table-layout: fixed;
-    }
-    
-    /* Mejorar visibilidad de elementos de formulario en móviles */
-    .form-control {
-        font-size: 14px;
-        padding: 8px 12px;
-    }
-    
-    .form-group label {
-        font-size: 14px;
-    }
-    
-    /* Asegurar que modales no excedan pantalla */
-    .modal-content {
-        width: 95%;
-        padding: 15px 10px;
-    }
-}
-
-@media (max-width: 768px) {
-  .table-container table thead {
-    display: none;
-  }
-
-  .table-container table, 
-  .table-container table tbody, 
-  .table-container table tr, 
-  .table-container table td {
-    display: block;
-    width: 100%;
-  }
-
-  .table-container table tr {
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    background: #fff;
-  }
-
-  .table-container table td {
-    padding: 8px 10px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-  }
-
-  .table-container table td:last-child {
-    border-bottom: none;
-  }
-
-  .table-container table td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    display: block;
-    margin-bottom: 5px;
-    color: var(--primary);
-  }
-}
-
-
-/* Meta tag necesario para asegurar escala correcta en móviles */
-/* Agregar al HTML: <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> */
+            --primary: #e83e8c;
+            --primary-light: #f8d7e3;
+            --secondary: #6c757d;
+            --dark: #343a40;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            overflow-x: hidden;
+            /* Previene desplazamiento horizontal en todo el documento */
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+            max-width: 100%;
+            /* Asegura que no exceda el ancho de la pantalla */
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(to bottom, var(--primary), #c71f76);
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid white;
+        }
+
+        .sidebar-menu a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Mobile menu icon */
+        .mobile-menu-icon {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: white;
+            background: var(--primary);
+            padding: 10px;
+            border-radius: 50%;
+            z-index: 1100;
+            cursor: pointer;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+            width: calc(100% - 250px);
+            /* Asegura el ancho correcto */
+            max-width: 100%;
+            /* Previene desplazamiento horizontal */
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s;
+            width: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card i {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .stat-card h3 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        /* Forms */
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .form-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+            width: 100%;
+        }
+
+        .form-col {
+            flex: 1;
+            padding: 0 10px;
+            min-width: 200px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #c71f76;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        /* Tables */
+        .table-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            width: 100%;
+            overflow-x: auto;
+            /* Permite desplazamiento horizontal solo en tablas si es necesario */
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            /* Ayuda a manejar el ancho de columnas */
+        }
+
+        .table th,
+        .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            word-wrap: break-word;
+            /* Permite que el texto se rompa y envuelva */
+        }
+
+        .table th {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .table .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .table .actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .table .actions .edit {
+            color: var(--info);
+        }
+
+        .table .actions .delete {
+            color: var(--danger);
+        }
+
+        /* Product card grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            width: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-img {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-img img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-info h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: var(--dark);
+        }
+
+        .product-info .price {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .product-info .cost {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        .product-info .stock {
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        /* Charts */
+        .chart-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            width: 100%;
+            overflow-x: hidden;
+            /* Previene desplazamiento horizontal en gráficos */
+        }
+
+        .chart-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 18px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+            /* Permite que las pestañas se envuelvan en móviles */
+            width: 100%;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            color: var(--secondary);
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Section */
+        .section {
+            display: none;
+            width: 100%;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 90%;
+            /* Más adaptable para móviles */
+            width: 700px;
+            animation: modalopen 0.3s;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+        }
+
+        .close-modal {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .close-modal:hover {
+            color: var(--primary);
+        }
+
+        @keyframes modalopen {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cart */
+        .cart-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+            /* Permite envolvimiento en pantallas pequeñas */
+        }
+
+        .cart-item-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .cart-item-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-info {
+            flex: 1;
+            padding: 0 15px;
+            min-width: 150px;
+            /* Asegura espacio mínimo para la información */
+        }
+
+        .cart-item-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-item-qty {
+            width: 50px;
+            text-align: center;
+            margin: 0 10px;
+        }
+
+        .cart-summary {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            text-align: right;
+        }
+
+        .cart-total {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* Receipt */
+        .receipt {
+            padding: 20px;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .receipt-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .receipt-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            /* Permite envolvimiento en móviles */
+        }
+
+        .receipt-items {
+            margin-bottom: 20px;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .receipt-total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 2px solid #eee;
+        }
+
+        /* Utils */
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 70%;
+            }
+
+            .sidebar.active {
+                display: block;
+                transform: translateX(0);
+            }
+
+            .mobile-menu-icon {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+                width: 100%;
+            }
+
+            .sidebar-header h1 {
+                font-size: 18px;
+                /* Mejor mostrar texto pequeño que ocultarlo */
+            }
+
+            .sidebar-header p {
+                font-size: 12px;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .form-col {
+                width: 100%;
+                padding: 0;
+                margin-bottom: 15px;
+            }
+
+            /* Reducir tamaño de texto y padding para móviles */
+            body {
+                font-size: 14px;
+            }
+
+            h1,
+            h2,
+            h3 {
+                word-wrap: break-word;
+            }
+
+            .table th,
+            .table td {
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            /* Ajustar elementos de carro para móviles */
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cart-item-info,
+            .cart-item-actions {
+                width: 100%;
+                margin-top: 10px;
+                padding: 0;
+            }
+
+            .modal-content {
+                padding: 15px;
+                width: 90%;
+                margin: 20% auto;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .sidebar {
+                display: block;
+                transform: none;
+                width: 250px;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                width: calc(100% - 250px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 85%;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 8px 15px;
+            }
+
+            .form-container,
+            .table-container,
+            .chart-container,
+            .cart-container {
+                padding: 15px 10px;
+            }
+
+            .page-title {
+                font-size: 20px;
+            }
+
+            .receipt {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            /* Asegurar que las tablas se vean bien en móviles */
+            .table {
+                table-layout: fixed;
+            }
+
+            /* Mejorar visibilidad de elementos de formulario en móviles */
+            .form-control {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+
+            .form-group label {
+                font-size: 14px;
+            }
+
+            /* Asegurar que modales no excedan pantalla */
+            .modal-content {
+                width: 95%;
+                padding: 15px 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .table-container table thead {
+                display: none;
+            }
+
+            .table-container table,
+            .table-container table tbody,
+            .table-container table tr,
+            .table-container table td {
+                display: block;
+                width: 100%;
+            }
+
+            .table-container table tr {
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 10px;
+                background: #fff;
+            }
+
+            .table-container table td {
+                padding: 8px 10px;
+                text-align: left;
+                border-bottom: 1px solid #eee;
+                font-size: 14px;
+            }
+
+            .table-container table td:last-child {
+                border-bottom: none;
+            }
+
+            .table-container table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                display: block;
+                margin-bottom: 5px;
+                color: var(--primary);
+            }
+        }
+
+
+        /* Meta tag necesario para asegurar escala correcta en móviles */
+        /* Agregar al HTML: <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> */
     </style>
     <script>
         // Asegúrate de cargar datos y actualizar todo al inicio
@@ -859,16 +875,25 @@ body {
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
+                <img src="https://i.ibb.co/7t9V9Rp3/Dise-o-sin-t-tulo-3.png" alt="Logo AMAVI"
+                    style="width: 120px; margin-bottom: 10px;">
                 <h1>AMAVI ACCESORIOS</h1>
                 <p>Sistema de Administración</p>
             </div>
-<ul class="sidebar-menu">
-    <li><a href="#" onclick="openSection('dashboard')" class="active"><i class="fas fa-chart-line"></i> <span>Dashboard</span></a></li>
-    <li><a href="#" onclick="openSection('inventory')"><i class="fas fa-box"></i> <span>Inventario</span></a></li>
-    <li><a href="#" onclick="openSection('sales')"><i class="fas fa-shopping-cart"></i> <span>Ventas</span></a></li>
-    <li><a href="#" onclick="openSection('history')"><i class="fas fa-history"></i> <span>Historial</span></a></li>
-    <li><a href="#" onclick="openSection('statistics')"><i class="fas fa-chart-pie"></i> <span>Estadísticas</span></a></li>
-</ul>
+            <ul class="sidebar-menu">
+                <li><a href="#" onclick="openSection('dashboard')" class="active"><i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span></a></li>
+                <li><a href="#" onclick="openSection('inventory')"><i class="fas fa-box"></i>
+                        <span>Inventario</span></a></li>
+                <li><a href="#" onclick="openSection('sales')"><i class="fas fa-shopping-cart"></i>
+                        <span>Ventas</span></a></li>
+                <li><a href="#" onclick="openSection('history')"><i class="fas fa-history"></i>
+                        <span>Historial</span></a></li>
+                <li><a href="#" onclick="openSection('customers')"><i class="fas fa-user"></i> <span>Clientes</span></a>
+                </li>
+                <li><a href="#" onclick="openSection('statistics')"><i class="fas fa-chart-pie"></i>
+                        <span>Estadísticas</span></a></li>
+            </ul>
         </div>
 
         <!-- Main Content -->
@@ -945,6 +970,7 @@ body {
                                         <option value="Anillos">Anillos</option>
                                         <option value="Aretes">Aretes</option>
                                         <option value="Sets">Sets</option>
+                                        <option value="Ear cuff">Ear cuff</option>
                                         <option value="Accesorios">Accesorios</option>
                                     </select>
                                 </div>
@@ -1033,6 +1059,7 @@ body {
                                 <option value="Anillos">Anillos</option>
                                 <option value="Aretes">Aretes</option>
                                 <option value="Sets">Sets</option>
+                                <option value="Ear cuff">Ear cuff</option>
                                 <option value="Accesorios">Accesorios</option>
                             </select>
                         </div>
@@ -1048,6 +1075,25 @@ body {
                     <div id="cart-items">
                         <!-- Cart items will be added here -->
                         <div class="text-center" id="empty-cart-message">El carrito está vacío</div>
+                    </div>
+                    <div id="customer-info" style="margin-top:20px;">
+                        <h3>Datos del Cliente</h3>
+                        <div class="form-group">
+                            <select id="customer-select" class="form-control">
+                                <option value="">-- Buscar cliente registrado --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="customer-name" class="form-control" placeholder="Nombre completo"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="customer-email" class="form-control"
+                                placeholder="Correo electrónico" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="customer-phone" class="form-control" placeholder="Teléfono" required>
+                        </div>
                     </div>
                     <div class="cart-summary">
                         <div class="cart-total">Total: $<span id="cart-total">0.00</span></div>
@@ -1096,6 +1142,30 @@ body {
                         </thead>
                         <tbody id="history-table-body">
                             <!-- Sales history will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="customers" class="section">
+                <h1 class="page-title">Clientes</h1>
+
+                <div class="table-container">
+                    <h2 class="form-title">Listado de Clientes</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Teléfono</th>
+                                <th>Compras</th>
+                                <th>Total Gastado</th>
+                                <th>Última Compra</th>
+                                <th>Editar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table-body">
+                            <!-- Clientes se cargarán aquí -->
                         </tbody>
                     </table>
                 </div>
@@ -1209,6 +1279,7 @@ body {
                                 <option value="Anillos">Anillos</option>
                                 <option value="Aretes">Aretes</option>
                                 <option value="Sets">Sets</option>
+                                <option value="Ear cuff">Ear cuff</option>
                                 <option value="Accesorios">Accesorios</option>
                             </select>
                         </div>
@@ -1272,6 +1343,31 @@ body {
             </div>
         </div>
     </div>
+    <div id="edit-customer-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Datos del Cliente</h2>
+                <span class="close-modal" id="close-edit-customer-modal">&times;</span>
+            </div>
+            <form id="edit-customer-form">
+                <input type="hidden" id="edit-sale-id">
+                <div class="form-group">
+                    <label for="edit-customer-name">Nombre</label>
+                    <input type="text" id="edit-customer-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-customer-email">Correo</label>
+                    <input type="email" id="edit-customer-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-customer-phone">Teléfono</label>
+                    <input type="tel" id="edit-customer-phone" class="form-control" required>
+                </div>
+                <button type="submit" class="btn">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
 
 
     <!-- Configuración de Firebase -->
@@ -1350,6 +1446,58 @@ body {
             renderInventory(); // si estás en sección inventario
         }
 
+        async function renderCustomers() {
+            const { getDocs, collection } = window.firebaseFns;
+            const db = window.firebaseDB;
+
+            const customersTableBody = document.getElementById('customers-table-body');
+            customersTableBody.innerHTML = '';
+
+            // Obtener clientes
+            const customersSnapshot = await getDocs(collection(db, 'clientes'));
+            const customers = [];
+            customersSnapshot.forEach(doc => {
+                customers.push({ id: doc.id, ...doc.data() });
+            });
+
+            // Obtener ventas
+            const salesSnapshot = await getDocs(collection(db, 'ventas'));
+            const salesData = [];
+            salesSnapshot.forEach(doc => {
+                salesData.push(doc.data());
+            });
+
+            if (customers.length === 0) {
+                customersTableBody.innerHTML = `<tr><td colspan="6" class="text-center">No hay clientes registrados</td></tr>`;
+                return;
+            }
+
+            customers.forEach(customer => {
+                const customerSales = salesData.filter(sale => sale.customer && sale.customer.email.toLowerCase() === customer.email.toLowerCase());
+
+                const totalPurchases = customerSales.length;
+                const totalSpent = customerSales.reduce((sum, sale) => sum + sale.total, 0);
+                const lastPurchaseDate = customerSales.length > 0
+                    ? new Date(Math.max(...customerSales.map(sale => new Date(sale.date)))).toLocaleString()
+                    : "-";
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+    <td>${customer.name}</td>
+    <td>${customer.email}</td>
+    <td>${customer.phone}</td>
+    <td>${totalPurchases}</td>
+    <td>$${totalSpent.toFixed(2)}</td>
+    <td>${lastPurchaseDate}</td>
+    <td class="actions">
+        <button class="edit" onclick="openEditCustomerModal('${customer.id}', '${customer.name}', '${customer.email}', '${customer.phone}')"><i class="fas fa-edit"></i></button>
+    </td>
+`;
+                customersTableBody.appendChild(row);
+            });
+        }
+
+
         // DOM Elements
         const sections = document.querySelectorAll('.section');
         const menuLinks = document.querySelectorAll('.sidebar-menu a');
@@ -1388,29 +1536,6 @@ body {
         const bestSellerElement = document.getElementById('best-seller');
         const bestCategoryElement = document.getElementById('best-category');
         const topProductsTable = document.getElementById('top-products-table');
-
-        // Navigation
-        async function openSection(sectionId) {
-            sections.forEach(section => section.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-
-            menuLinks.forEach(link => link.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            if (sectionId === 'inventory') {
-                await loadProductsFromFirebase();
-            } else if (sectionId === 'sales') {
-                renderSalesProducts();
-            } else if (sectionId === 'history') {
-                await renderSalesHistory();
-            } else if (sectionId === 'dashboard' || sectionId === 'statistics') {
-                await loadSalesFromFirebase(); // 👈 asegúrate de tener esta función bien
-                updateStatistics();
-            }
-        }
-
-
-
 
         // Upload image to ImgBB
         async function uploadImage(file) {
@@ -1774,8 +1899,68 @@ body {
             renderCart();
         }
 
+        async function loadCustomersIntoSelect() {
+            const { getDocs, collection } = window.firebaseFns;
+            const db = window.firebaseDB;
+
+            const customerSelect = document.getElementById('customer-select');
+            customerSelect.innerHTML = `<option value="">-- Buscar cliente registrado --</option>`;
+
+            const snapshot = await getDocs(collection(db, 'clientes'));
+            snapshot.forEach(doc => {
+                const customer = doc.data();
+                customerSelect.innerHTML += `<option value="${doc.id}" data-name="${customer.name}" data-email="${customer.email}" data-phone="${customer.phone}">${customer.name} (${customer.email})</option>`;
+            });
+        }
+
+        // Al cargar sección ventas
+        async function openSection(sectionId) {
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+
+            menuLinks.forEach(link => link.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            if (sectionId === 'sales') {
+                renderSalesProducts();
+                await loadCustomersIntoSelect();
+                const customerSelect = document.getElementById('customer-select');
+                customerSelect.addEventListener('change', function () {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (this.value !== '') {
+                        document.getElementById('customer-name').value = selectedOption.getAttribute('data-name');
+                        document.getElementById('customer-email').value = selectedOption.getAttribute('data-email');
+                        document.getElementById('customer-phone').value = selectedOption.getAttribute('data-phone');
+                    } else {
+                        document.getElementById('customer-name').value = '';
+                        document.getElementById('customer-email').value = '';
+                        document.getElementById('customer-phone').value = '';
+                    }
+                });
+            } else if (sectionId === 'customers') {
+                await renderCustomers();
+            } else if (sectionId === 'inventory') {
+                await loadProductsFromFirebase();
+            } else if (sectionId === 'history') {
+                await renderSalesHistory();
+            } else if (sectionId === 'dashboard' || sectionId === 'statistics') {
+                await loadSalesFromFirebase();
+                updateStatistics();
+            }
+        }
+
+
         checkoutBtn.addEventListener('click', async function () {
             if (cart.length === 0) return;
+
+            const name = document.getElementById('customer-name').value.trim();
+            const email = document.getElementById('customer-email').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+
+            if (!name || !email || !phone) {
+                alert('Por favor completa los datos del cliente.');
+                return;
+            }
 
             if (!confirm('¿Estás seguro que deseas finalizar la compra?')) return;
 
@@ -1809,15 +1994,51 @@ body {
                 total: saleTotal,
                 cost: saleCost,
                 profit: saleTotal - saleCost,
+                customer: {  // 👈 aquí guardamos el cliente junto a la venta
+                    name,
+                    email,
+                    phone
+                }
             };
 
+            const { collection, addDoc, getDocs } = window.firebaseFns;
+            const db = window.firebaseDB;
+
             // Guardar la venta en Firebase
-            const saleRef = window.firebaseFns.collection(window.firebaseDB, 'ventas');
-            await window.firebaseFns.addDoc(saleRef, sale);
+            const saleRef = collection(db, 'ventas');
+            await addDoc(saleRef, sale);
+
+            // Guardar cliente o actualizar si existe
+            const clientsRef = collection(db, 'clientes');
+            const snapshot = await getDocs(clientsRef);
+            let existingClient = null;
+
+            snapshot.forEach(doc => {
+                const clientData = doc.data();
+                if (clientData.email.toLowerCase() === email.toLowerCase()) {
+                    existingClient = doc;
+                }
+            });
+
+            if (existingClient) {
+                // Actualizar datos
+                await window.firebaseFns.updateDoc(existingClient.ref, {
+                    name,
+                    phone
+                });
+            } else {
+                // Crear nuevo cliente
+                await addDoc(clientsRef, {
+                    name,
+                    email,
+                    phone,
+                    createdAt: new Date().toISOString()
+                });
+            }
 
             // Descontar stock
             for (let item of cart) {
-                const productRef = window.firebaseFns.doc(window.firebaseDB, 'productos', item.productId);
+                const productRef = window.firebaseFns.doc(db, 'productos', item.productId);
                 await window.firebaseFns.updateDoc(productRef, {
                     quantity: window.firebase.firestore.FieldValue.increment(-item.quantity),
                     sold: window.firebase.firestore.FieldValue.increment(item.quantity),
@@ -1827,30 +2048,12 @@ body {
             await loadProductsFromFirebase();
             sales.push(sale);
 
-            // Actualizar el carrito
-            cart.forEach(item => {
-                const product = products.find(p => p.id === item.productId);
-                if (product) {
-                    product.quantity -= item.quantity;
-                    product.sold = (product.sold || 0) + item.quantity;
-                }
-            });
-
-            // Guardar productos actualizados en localStorage
-            localStorage.setItem('milaProducts', JSON.stringify(products));
-
-            // Mostrar recibo
-            showReceipt(sale);
-
-            // Limpiar el carrito
+            // Limpiar carrito
             cart = [];
             renderCart();
-
-            // Actualizar la visualización de productos de ventas
             renderSalesProducts();
-
-            // Actualizar estadísticas
             updateStatistics();
+            showReceipt(sale);
         });
 
 
@@ -1861,9 +2064,10 @@ body {
 
             receiptContent.innerHTML = `
                 <div class="receipt-header">
-                    <div class="receipt-logo">AMAVI ACCESORIOS</div>
-                    <p>Joyería y accesorios para todo público</p>
-                </div>
+        <img src="https://i.ibb.co/7t9V9Rp3/Dise-o-sin-t-tulo-3.png" alt="Logo AMAVI" style="width: 100px; margin-bottom: 10px;">
+        <div class="receipt-logo" style="font-size: 20px; margin-top: 10px;">AMAVI ACCESORIOS</div>
+        <p style="font-size: 14px;">Joyería y accesorios para todo público</p>
+    </div>
                 
                 <div class="receipt-info">
                     <div>
@@ -1974,45 +2178,46 @@ body {
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-            <td>${formattedDate}</td>
-            <td>${sale.id.slice(-6).toUpperCase()}</td>
-            <td>${sale.items.length} productos</td>
-            <td>$${sale.total.toFixed(2)}</td>
-            <td>$${sale.profit.toFixed(2)}</td>
-            <td class="actions">
-                <button class="edit" onclick="viewSaleDetails('${sale.id}')"><i class="fas fa-eye"></i></button>
-                <button class="edit" onclick="printSaleReceipt('${sale.id}')"><i class="fas fa-print"></i></button>
-            </td>
-        `;
-
+    <td>${formattedDate}</td>
+    <td>${sale.id.slice(-6).toUpperCase()}</td>
+    <td>${sale.items.length} productos</td>
+    <td>$${sale.total.toFixed(2)}</td>
+    <td>$${sale.profit.toFixed(2)}</td>
+    <td class="actions">
+        <button class="edit" onclick="viewSaleDetails('${sale.id}')"><i class="fas fa-eye"></i></button>
+        <button class="edit" onclick="printSaleReceipt('${sale.id}')"><i class="fas fa-print"></i></button>
+        <button class="edit" onclick="editSaleCustomer('${sale.id}')"><i class="fas fa-user-edit"></i></button>
+    </td>
+`;
                 historyTableBody.appendChild(row);
+
             });
         }
 
 
         // View sale details
         window.viewSaleDetails = async function (saleId) {
-    const saleDoc = await window.firebaseFns.getDocs(
-        window.firebaseFns.collection(window.firebaseDB, 'ventas')
-    );
+            const saleDoc = await window.firebaseFns.getDocs(
+                window.firebaseFns.collection(window.firebaseDB, 'ventas')
+            );
 
-    let sale = null;
-    saleDoc.forEach(doc => {
-        if (doc.id === saleId) {
-            sale = doc.data();
-            sale.id = doc.id;
-        }
-    });
+            let sale = null;
+            saleDoc.forEach(doc => {
+                if (doc.id === saleId) {
+                    sale = doc.data();
+                    sale.id = doc.id;
+                }
+            });
 
-    if (!sale) {
-        alert('No se encontró la venta.');
-        return;
-    }
+            if (!sale) {
+                alert('No se encontró la venta.');
+                return;
+            }
 
-    const date = new Date(sale.date);
-    const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+            const date = new Date(sale.date);
+            const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
 
-    saleDetailsContent.innerHTML = `
+            saleDetailsContent.innerHTML = `
         <div class="form-container" style="box-shadow: none; padding: 0;">
             <h3 class="mb-20">Venta #${sale.id.slice(-6).toUpperCase()}</h3>
             <p><strong>Fecha:</strong> ${formattedDate}</p>
@@ -2043,8 +2248,8 @@ body {
         </div>
     `;
 
-    saleDetailsModal.style.display = 'block';
-};
+            saleDetailsModal.style.display = 'block';
+        };
 
         // Close sale details modal
         closeSaleDetailsModal.addEventListener('click', function () {
@@ -2053,26 +2258,26 @@ body {
 
         // Print sale receipt
         window.printSaleReceipt = async function (saleId) {
-    const saleDoc = await window.firebaseFns.getDocs(
-        window.firebaseFns.collection(window.firebaseDB, 'ventas')
-    );
+            const saleDoc = await window.firebaseFns.getDocs(
+                window.firebaseFns.collection(window.firebaseDB, 'ventas')
+            );
 
-    let sale = null;
-    saleDoc.forEach(doc => {
-        if (doc.id === saleId) {
-            sale = doc.data();
-            sale.id = doc.id;
-        }
-    });
+            let sale = null;
+            saleDoc.forEach(doc => {
+                if (doc.id === saleId) {
+                    sale = doc.data();
+                    sale.id = doc.id;
+                }
+            });
 
-    if (!sale) {
-        alert('No se encontró la venta.');
-        return;
-    }
+            if (!sale) {
+                alert('No se encontró la venta.');
+                return;
+            }
 
-    // Mostrar recibo
-    showReceipt(sale);
-};
+            // Mostrar recibo
+            showReceipt(sale);
+        };
 
 
         // Update statistics
@@ -2483,6 +2688,55 @@ body {
                 }
             });
 
+            async function renderCustomers() {
+                const { getDocs, collection } = window.firebaseFns;
+                const db = window.firebaseDB;
+
+                const customersTableBody = document.getElementById('customers-table-body');
+                customersTableBody.innerHTML = '';
+
+                // Traer todos los clientes
+                const customersSnapshot = await getDocs(collection(db, 'clientes'));
+                const customers = [];
+                customersSnapshot.forEach(doc => {
+                    customers.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Traer todas las ventas
+                const salesSnapshot = await getDocs(collection(db, 'ventas'));
+                const salesData = [];
+                salesSnapshot.forEach(doc => {
+                    salesData.push(doc.data());
+                });
+
+                if (customers.length === 0) {
+                    customersTableBody.innerHTML = `<tr><td colspan="6" class="text-center">No hay clientes registrados</td></tr>`;
+                    return;
+                }
+
+                customers.forEach(customer => {
+                    const customerSales = salesData.filter(sale => sale.customer && sale.customer.email.toLowerCase() === customer.email.toLowerCase());
+
+                    const totalPurchases = customerSales.length;
+                    const totalSpent = customerSales.reduce((sum, sale) => sum + sale.total, 0);
+                    const lastPurchaseDate = customerSales.length > 0
+                        ? new Date(Math.max(...customerSales.map(sale => new Date(sale.date)))).toLocaleString()
+                        : "-";
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+            <td>${customer.name}</td>
+            <td>${customer.email}</td>
+            <td>${customer.phone}</td>
+            <td>${totalPurchases}</td>
+            <td>$${totalSpent.toFixed(2)}</td>
+            <td>${lastPurchaseDate}</td>
+        `;
+                    customersTableBody.appendChild(row);
+                });
+            }
+
+
             // Close modals when clicking outside
             window.onclick = function (event) {
                 if (event.target === editProductModal) {
@@ -2753,36 +3007,130 @@ body {
             });
         }
 
-// Seleccionar elementos
-const menuIcon = document.createElement('div');
-menuIcon.classList.add('mobile-menu-icon');
-menuIcon.innerHTML = '<i class="fas fa-bars"></i>'; // Ícono del menú
-document.body.appendChild(menuIcon);
+        // Seleccionar elementos
+        const menuIcon = document.createElement('div');
+        menuIcon.classList.add('mobile-menu-icon');
+        menuIcon.innerHTML = '<i class="fas fa-bars"></i>'; // Ícono del menú
+        document.body.appendChild(menuIcon);
 
-const sidebar = document.querySelector('.sidebar');
-const mainContent = document.querySelector('.main-content');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
 
-// Mostrar/Ocultar barra lateral al hacer clic en el ícono
-menuIcon.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
-});
+        // Mostrar/Ocultar barra lateral al hacer clic en el ícono
+        menuIcon.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
 
-// Ocultar barra lateral al hacer clic fuera de ella
-mainContent.addEventListener('click', () => {
-    if (sidebar.classList.contains('active')) {
-        sidebar.classList.remove('active');
-    }
-});
-// Seleccionar enlaces de la barra lateral
-const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+        // Ocultar barra lateral al hacer clic fuera de ella
+        mainContent.addEventListener('click', () => {
+            if (sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+        // Seleccionar enlaces de la barra lateral
+        const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
 
-// Cerrar la barra lateral al hacer clic en un enlace
-sidebarLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        if (sidebar.classList.contains('active')) {
-            sidebar.classList.remove('active');
+        // Cerrar la barra lateral al hacer clic en un enlace
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+
+
+        window.editSaleCustomer = async function (saleId) {
+            const saleDoc = await window.firebaseFns.getDocs(
+                window.firebaseFns.collection(window.firebaseDB, 'ventas')
+            );
+
+            let sale = null;
+            saleDoc.forEach(doc => {
+                if (doc.id === saleId) {
+                    sale = doc.data();
+                    sale.id = doc.id;
+                }
+            });
+
+            if (!sale) {
+                alert('No se encontró la venta.');
+                return;
+            }
+
+            document.getElementById('edit-sale-id').value = saleId;
+            document.getElementById('edit-customer-name').value = sale.customer?.name || '';
+            document.getElementById('edit-customer-email').value = sale.customer?.email || '';
+            document.getElementById('edit-customer-phone').value = sale.customer?.phone || '';
+
+            document.getElementById('edit-customer-modal').style.display = 'block';
+        };
+
+        const editCustomerForm = document.getElementById('edit-customer-form');
+        const closeEditCustomerModal = document.getElementById('close-edit-customer-modal');
+
+        editCustomerForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const saleId = document.getElementById('edit-sale-id').value;
+            const name = document.getElementById('edit-customer-name').value.trim();
+            const email = document.getElementById('edit-customer-email').value.trim();
+            const phone = document.getElementById('edit-customer-phone').value.trim();
+
+            if (!name || !email || !phone) {
+                alert('Por favor completa todos los campos.');
+                return;
+            }
+
+            const saleRef = window.firebaseFns.doc(window.firebaseDB, 'ventas', saleId);
+            await window.firebaseFns.updateDoc(saleRef, {
+                customer: { name, email, phone }
+            });
+
+            const clientsRef = window.firebaseFns.collection(window.firebaseDB, 'clientes');
+            const snapshot = await window.firebaseFns.getDocs(clientsRef);
+
+            let existingClient = null;
+
+            snapshot.forEach(doc => {
+                const clientData = doc.data();
+                if (clientData.email.toLowerCase() === email.toLowerCase()) {
+                    existingClient = doc;
+                }
+            });
+
+            if (existingClient) {
+                // Si el cliente ya existe, actualizamos su nombre y teléfono
+                await window.firebaseFns.updateDoc(existingClient.ref, {
+                    name,
+                    phone
+                });
+                await renderCustomers();
+                console.log('Cliente actualizado en la colección "clientes".');
+            } else {
+                // Si no existe, lo creamos (opcional)
+                await window.firebaseFns.addDoc(clientsRef, {
+                    name,
+                    email,
+                    phone,
+                    createdAt: new Date().toISOString()
+                });
+                console.log('Nuevo cliente creado en la colección "clientes".');
+            }
+        });
+
+        closeEditCustomerModal.addEventListener('click', function () {
+            document.getElementById('edit-customer-modal').style.display = 'none';
+        });
+
+        function openEditCustomerModal(id, name, email, phone) {
+            document.getElementById('edit-sale-id').value = id;
+            document.getElementById('edit-customer-name').value = name;
+            document.getElementById('edit-customer-email').value = email;
+            document.getElementById('edit-customer-phone').value = phone;
+
+            document.getElementById('edit-customer-modal').style.display = 'block';
         }
-    });
-});
+
 
     </script>
