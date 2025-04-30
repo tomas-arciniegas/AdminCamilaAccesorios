@@ -1008,7 +1008,7 @@
 
                         <div class="form-group">
                             <label for="product-image">Imagen del Producto</label>
-                            <input type="file" id="product-image" class="form-control" accept="image/*">
+                            <input type="file" id="product-image" class="form-control" accept="image/*" required>
                         </div>
 
                         <button type="submit" class="btn">Agregar Producto</button>
@@ -1700,17 +1700,13 @@
             await loadProductsFromFirebase();
 
             // Check if new image was uploaded
-const imageFile = document.getElementById('product-image').files[0];
-let imageUrl = '';
-
-if (imageFile) {
-    imageUrl = await uploadImage(imageFile);
-    if (!imageUrl) return; // si falla la subida, se detiene
-} else {
-    // Imagen por defecto si no se sube ninguna
-    imageUrl = 'https://via.placeholder.com/150?text=Sin+Imagen';
-}
-
+            const imageFile = document.getElementById('edit-product-image').files[0];
+            if (imageFile) {
+                const imageUrl = await uploadImage(imageFile);
+                if (imageUrl) {
+                    product.image = imageUrl;
+                }
+            }
 
             // Save to localStorage
             localStorage.setItem('milaProducts', JSON.stringify(products));
