@@ -850,20 +850,35 @@
         async function initializePage() {
             try {
                 console.log("Iniciando carga de datos...");
-                // Cargar productos desde Firebase
                 await loadProductsFromFirebase();
-
-                // Cargar ventas desde Firebase si es necesario para las estadísticas
                 await loadSalesFromFirebase();
-
-                // Actualizar estadísticas después de cargar datos
                 updateStatistics();
+
+                // Agrega estas líneas 👇
+                renderSalesProducts();
+                await renderSalesHistory();
+                await renderCustomers();
+                await loadCustomersIntoSelect();
+                const customerSelect = document.getElementById('customer-select');
+                customerSelect.addEventListener('change', function () {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (this.value !== '') {
+                        document.getElementById('customer-name').value = selectedOption.getAttribute('data-name');
+                        document.getElementById('customer-email').value = selectedOption.getAttribute('data-email');
+                        document.getElementById('customer-phone').value = selectedOption.getAttribute('data-phone');
+                    } else {
+                        document.getElementById('customer-name').value = '';
+                        document.getElementById('customer-email').value = '';
+                        document.getElementById('customer-phone').value = '';
+                    }
+                });
 
                 console.log("Datos y estadísticas cargados correctamente.");
             } catch (error) {
                 console.error("Error al cargar datos iniciales:", error);
             }
         }
+
 
         // Ejecutar al cargar la página
         window.addEventListener('DOMContentLoaded', initializePage);
@@ -892,7 +907,11 @@
                 <li><a href="#" onclick="openSection('customers')"><i class="fas fa-user"></i> <span>Clientes</span></a>
                 </li>
                 <li><a href="#" onclick="openSection('statistics')"><i class="fas fa-chart-pie"></i>
-                        <span>Estadísticas</span></a></li>
+                        <span>Estadísticas</span></a>
+                </li>
+                <li><a href="#" onclick="openSection('investments')"><i class="fas fa-hand-holding-usd"></i>
+                        <span>Inversiones</span></a>
+                </li>
             </ul>
         </div>
 
@@ -1235,6 +1254,53 @@
                     </table>
                 </div>
             </section>
+
+            <section id="investments" class="section">
+                <h1 class="page-title">Inversiones</h1>
+
+                <div class="form-container">
+                    <h2 class="form-title">Registrar Nueva Inversión</h2>
+                    <form id="investment-form">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="investment-item">Artículo</label>
+                                    <input type="text" id="investment-item" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="investment-amount">Monto ($)</label>
+                                    <input type="number" id="investment-amount" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="investment-notes">Notas</label>
+                            <textarea id="investment-notes" class="form-control" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn">Guardar Inversión</button>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <h2 class="form-title">Historial de Inversiones</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Artículo</th>
+                                <th>Monto</th>
+                                <th>Notas</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody id="investment-table-body">
+                            <!-- Aquí se mostrarán las inversiones -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
         </div>
     </div>
 
@@ -1924,19 +1990,6 @@
             if (sectionId === 'sales') {
                 renderSalesProducts();
                 await loadCustomersIntoSelect();
-                const customerSelect = document.getElementById('customer-select');
-                customerSelect.addEventListener('change', function () {
-                    const selectedOption = this.options[this.selectedIndex];
-                    if (this.value !== '') {
-                        document.getElementById('customer-name').value = selectedOption.getAttribute('data-name');
-                        document.getElementById('customer-email').value = selectedOption.getAttribute('data-email');
-                        document.getElementById('customer-phone').value = selectedOption.getAttribute('data-phone');
-                    } else {
-                        document.getElementById('customer-name').value = '';
-                        document.getElementById('customer-email').value = '';
-                        document.getElementById('customer-phone').value = '';
-                    }
-                });
             } else if (sectionId === 'customers') {
                 await renderCustomers();
             } else if (sectionId === 'inventory') {
@@ -1946,6 +1999,9 @@
             } else if (sectionId === 'dashboard' || sectionId === 'statistics') {
                 await loadSalesFromFirebase();
                 updateStatistics();
+            }
+            else if (sectionId === 'investments') {
+                await renderInvestmentsFromFirebase();
             }
         }
 
@@ -2281,23 +2337,23 @@
 
 
         // Update statistics
-        function updateStatistics() {
-            // Calculate total products in inventory
+        async function updateStatistics() {
+            // Calcular productos totales en inventario
             const totalProducts = products.reduce((sum, product) => sum + product.quantity, 0);
             totalProductsElement.textContent = totalProducts;
 
-            // Calculate total sales amount
+            // Calcular ventas totales
             const totalSalesAmount = sales.reduce((sum, sale) => sum + sale.total, 0);
             totalSalesElement.textContent = formatCurrency(totalSalesAmount);
 
-            // Calculate total orders
+            // Calcular pedidos totales
             totalOrdersElement.textContent = sales.length;
 
-            // Calculate total profit
+            // Calcular ganancia total
             const totalProfit = sales.reduce((sum, sale) => sum + sale.profit, 0);
             totalProfitElement.textContent = formatCurrency(totalProfit);
 
-            // Calculate average daily sales
+            // Calcular promedio de ventas diarias y margen
             if (sales.length > 0) {
                 const oldestSaleDate = new Date(sales.reduce((oldest, sale) =>
                     new Date(sale.date) < new Date(oldest.date) ? sale : oldest
@@ -2309,25 +2365,20 @@
                 const avgDailySales = totalSalesAmount / daysDifference;
                 avgDailySalesElement.textContent = formatCurrency(avgDailySales);
 
-                // Calculate profit margin
                 const profitMargin = (totalProfit / totalSalesAmount) * 100;
                 profitMarginElement.textContent = profitMargin.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + "%";
-            }
-
-            else {
+            } else {
                 avgDailySalesElement.textContent = formatCurrency(0);
                 profitMarginElement.textContent = "0%";
             }
 
-            // Find best selling product and category
+            // Mejores productos y categorías
             if (products.length > 0 && sales.length > 0) {
-                // Create a map of product sales
                 const productSales = {};
                 const categorySales = {};
 
                 sales.forEach(sale => {
                     sale.items.forEach(item => {
-                        // Track product sales
                         if (!productSales[item.productId]) {
                             productSales[item.productId] = {
                                 name: item.name,
@@ -2341,7 +2392,6 @@
                         productSales[item.productId].revenue += item.total;
                         productSales[item.productId].profit += item.total - (item.cost * item.quantity);
 
-                        // Track category sales
                         const product = products.find(p => p.id === item.productId);
                         if (product) {
                             if (!categorySales[product.category]) {
@@ -2357,41 +2407,58 @@
                     });
                 });
 
-                // Find best selling product
+                // Producto más vendido
                 let bestSellingProduct = null;
                 Object.keys(productSales).forEach(productId => {
                     if (!bestSellingProduct || productSales[productId].quantity > productSales[bestSellingProduct].quantity) {
                         bestSellingProduct = productId;
                     }
                 });
+                bestSellerElement.textContent = bestSellingProduct ? productSales[bestSellingProduct].name : "-";
 
-                if (bestSellingProduct) {
-                    bestSellerElement.textContent = productSales[bestSellingProduct].name;
-                } else {
-                    bestSellerElement.textContent = "-";
-                }
-
-                // Find best selling category
+                // Categoría más popular
                 let bestSellingCategory = null;
                 Object.keys(categorySales).forEach(category => {
                     if (!bestSellingCategory || categorySales[category].quantity > categorySales[bestSellingCategory].quantity) {
                         bestSellingCategory = category;
                     }
                 });
+                bestCategoryElement.textContent = bestSellingCategory || "-";
 
-                if (bestSellingCategory) {
-                    bestCategoryElement.textContent = bestSellingCategory;
-                } else {
-                    bestCategoryElement.textContent = "-";
-                }
-
-                // Populate top products table
+                // Tabla de top productos y gráficos
                 populateTopProductsTable(productSales);
-
-                // Update charts
                 updateCharts(categorySales, productSales);
             }
+
+            // 🔹 Cargar inversiones desde Firebase y calcular Ganancia Neta
+            const { getDocs, collection } = window.firebaseFns;
+            const db = window.firebaseDB;
+            const snapshot = await getDocs(collection(db, 'inversiones'));
+            const inversiones = snapshot.docs.map(doc => doc.data());
+            const totalInversiones = inversiones.reduce((sum, inv) => sum + inv.amount, 0);
+            const gananciaNeta = totalProfit - totalInversiones;
+
+            // 🔹 Mostrar tarjeta de Ganancia/Pérdida Neta
+            const dashboard = document.querySelector('#statistics .dashboard');
+            let netCard = dashboard.querySelector('.net-result-card');
+
+            if (!netCard) {
+                netCard = document.createElement('div');
+                netCard.className = 'stat-card net-result-card';
+                dashboard.appendChild(netCard);
+            }
+
+            const isGanancia = gananciaNeta >= 0;
+            const color = isGanancia ? 'var(--success)' : 'var(--danger)';
+            const label = isGanancia ? 'Ganancia Neta' : 'Pérdida Neta';
+
+            netCard.innerHTML = `
+        <i class="fas fa-balance-scale" style="color: ${color};"></i>
+        <h3 style="color: ${color};">${formatCurrency(gananciaNeta)}</h3>
+        <p>${label}</p>
+    `;
         }
+
 
         // Populate top products table
         function populateTopProductsTable(productSales) {
@@ -3132,5 +3199,107 @@
             document.getElementById('edit-customer-modal').style.display = 'block';
         }
 
+        const investmentForm = document.getElementById('investment-form');
+        const investmentTableBody = document.getElementById('investment-table-body');
+        let investments = JSON.parse(localStorage.getItem('milaInvestments') || '[]');
+
+        function renderInvestments() {
+            investmentTableBody.innerHTML = '';
+            if (investments.length === 0) {
+                investmentTableBody.innerHTML = `<tr><td colspan="4" class="text-center">No hay inversiones registradas</td></tr>`;
+                return;
+            }
+
+            investments.forEach(inv => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${inv.item}</td>
+                <td>$${inv.amount.toLocaleString('es-CO')}</td>
+                <td>${inv.notes}</td>
+                <td>${new Date(inv.date).toLocaleDateString()}</td>
+            `;
+                investmentTableBody.appendChild(row);
+            });
+        }
+
+        // Cargar inversiones al abrir la sección
+        async function openSection(sectionId) {
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+
+            menuLinks.forEach(link => link.classList.remove('active'));
+            const clickedLink = [...menuLinks].find(link => link.getAttribute('onclick')?.includes(sectionId));
+            if (clickedLink) clickedLink.classList.add('active');
+
+            if (sectionId === 'investments') {
+                await renderInvestmentsFromFirebase();  // ✅ AQUÍ SÍ se ejecuta
+            }
+
+            // Otros ifs para otras secciones...
+        }
+
+
+        async function saveInvestmentToFirebase(investment) {
+            const { addDoc, collection } = window.firebaseFns;
+            const db = window.firebaseDB;
+            await addDoc(collection(db, 'inversiones'), investment);
+        }
+
+        async function loadInvestmentsFromFirebase() {
+            const { getDocs, collection } = window.firebaseFns;
+            const db = window.firebaseDB;
+
+            const querySnapshot = await getDocs(collection(db, 'inversiones'));
+            return querySnapshot.docs.map(doc => doc.data());
+        }
+
+        investmentForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const newInvestment = {
+                item: document.getElementById('investment-item').value,
+                amount: parseFloat(document.getElementById('investment-amount').value),
+                notes: document.getElementById('investment-notes').value,
+                date: new Date().toISOString()
+            };
+
+            await saveInvestmentToFirebase(newInvestment);
+            alert('Inversión registrada correctamente.');
+            investmentForm.reset();
+            await renderInvestmentsFromFirebase(); // recargar desde Firebase
+            await loadProductsFromFirebase();
+            await loadSalesFromFirebase(); // ← solo para estadísticas 
+        });
+
+        async function renderInvestmentsFromFirebase() {
+            console.log("Cargando inversiones...");
+            const { getDocs, collection } = window.firebaseFns;
+            const db = window.firebaseDB;
+            const investmentTableBody = document.getElementById('investment-table-body');
+            investmentTableBody.innerHTML = '';
+
+            try {
+                const snapshot = await getDocs(collection(db, 'inversiones'));
+
+                if (snapshot.empty) {
+                    investmentTableBody.innerHTML = '<tr><td colspan="4" class="text-center">No hay inversiones registradas</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const inv = doc.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td>${inv.item || '-'}</td>
+                <td>$${parseFloat(inv.amount || 0).toLocaleString('es-CO')}</td>
+                <td>${inv.notes || '-'}</td>
+                <td>${inv.date ? new Date(inv.date).toLocaleDateString('es-CO') : doc.createTime.toDate().toLocaleDateString('es-CO')}</td>
+            `;
+                    investmentTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error al cargar inversiones:", error);
+                investmentTableBody.innerHTML = '<tr><td colspan="4" class="text-center">Error al cargar inversiones</td></tr>';
+            }
+        }
 
     </script>
