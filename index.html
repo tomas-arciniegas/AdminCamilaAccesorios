@@ -942,6 +942,17 @@
                         <h3 id="total-profit">$0</h3>
                         <p>Ganancia Total</p>
                     </div>
+                    <div class="stat-card">
+                        <i class="fas fa-boxes"></i>
+                        <h3 id="inventory-cost">$0</h3>
+                        <p>Valor del Inventario (Costo)</p>
+                    </div>
+                    <div class="stat-card net-result-card">
+                        <i class="fas fa-balance-scale" style="color: var(--success);"></i>
+                        <h3 id="net-result-value" style="color: var(--success);">$0</h3>
+                        <p id="net-result-label">Ganancia Neta</p>
+                    </div>
+
                 </div>
 
                 <div class="chart-container">
@@ -2433,10 +2444,45 @@
             // 🔹 Cargar inversiones desde Firebase y calcular Ganancia Neta
             const { getDocs, collection } = window.firebaseFns;
             const db = window.firebaseDB;
+
+            // Obtener inversiones
             const snapshot = await getDocs(collection(db, 'inversiones'));
             const inversiones = snapshot.docs.map(doc => doc.data());
             const totalInversiones = inversiones.reduce((sum, inv) => sum + inv.amount, 0);
-            const gananciaNeta = totalProfit - totalInversiones;
+
+            // Calcular valor del inventario a costo usando los productos ya cargados
+            let valorInventarioACosto = 0;
+            products.forEach(producto => {
+                const precioCosto = parseFloat(producto.cost || 0);
+                const cantidad = parseInt(producto.quantity || 0);
+                valorInventarioACosto += precioCosto * cantidad;
+            });
+
+            // 🔹 Mostrar valor en la tarjeta del dashboard
+            const inventoryCostElement = document.getElementById('inventory-cost');
+            if (inventoryCostElement) {
+                inventoryCostElement.textContent = formatCurrency(valorInventarioACosto);
+            }
+
+
+            // Calcular ganancia/pérdida neta real
+            const gananciaNeta = totalProfit - totalInversiones - valorInventarioACosto;
+
+            const netResultValue = document.getElementById('net-result-value');
+            const netResultLabel = document.getElementById('net-result-label');
+
+            const IsGanancia = gananciaNeta >= 0;
+            const Color = IsGanancia ? 'var(--success)' : 'var(--danger)';
+            const Label = IsGanancia ? 'Ganancia Neta' : 'Pérdida Neta';
+
+            if (netResultValue && netResultLabel) {
+                netResultValue.textContent = formatCurrency(gananciaNeta);
+                netResultValue.style.color = Color;
+                netResultLabel.textContent = Label;
+                netResultLabel.style.color = Color;
+                netResultValue.previousElementSibling.style.color = Color; // Icono
+            }
+
 
             // 🔹 Mostrar tarjeta de Ganancia/Pérdida Neta
             const dashboard = document.querySelector('#statistics .dashboard');
@@ -2450,13 +2496,17 @@
 
             const isGanancia = gananciaNeta >= 0;
             const color = isGanancia ? 'var(--success)' : 'var(--danger)';
-            const label = isGanancia ? 'Ganancia Neta' : 'Pérdida Neta';
+            const label = isGanancia
+                ? 'Ganancia Neta (real)'
+                : 'Pérdida Neta (incluye stock no vendido)';
 
             netCard.innerHTML = `
-        <i class="fas fa-balance-scale" style="color: ${color};"></i>
-        <h3 style="color: ${color};">${formatCurrency(gananciaNeta)}</h3>
-        <p>${label}</p>
-    `;
+                <i class="fas fa-balance-scale" style="color: ${color};"></i>
+                <h3 style="color: ${color};">${formatCurrency(gananciaNeta)}</h3>
+                <p>${label}</p>
+            `;
+
+
         }
 
 
